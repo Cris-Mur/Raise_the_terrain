@@ -1,55 +1,44 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <SDL2/SDL.h>
+#include "../Headers/basic_libs.h"
 
-//Screen dimension constants
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+int main(int argc, char **argv) {
 
-int main() {
+    //Screen dimension constants
+    const int SCREEN_WIDTH = 640;
+    const int SCREEN_HEIGHT = 480;
     //The window we'll be rendering to
-    SDL_Window* window = NULL;
-
+    SDL_Window *window = NULL;
     //The surface contained by the window
-    SDL_Surface* screenSurface = NULL;
+    SDL_Surface *screen = NULL;
+    //The image that will be load
+    SDL_Surface *img = NULL;
+
+    int t = 0;
 
     // write test
-    write(STDOUT_FILENO, "Cristian Murcia\n", 16);
-
-    //Initialize SDL
-    if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
+    write(STDOUT_FILENO, "Raise the terrain\n", 18);
+    //Start SDL
+    if (!_Sdl_born(SCREEN_WIDTH, SCREEN_HEIGHT, &window, &screen))
     {
-        printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError() );
+        printf("Failed to initialize!\n");
     }
     else
     {
-        //Create window
-        window = SDL_CreateWindow( "Raise the terrain", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
-        if( window == NULL )
+        //Load image
+        if (!_load_img(&img))
         {
-            printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );
+            printf("Failed to load image!\n");
         }
         else
         {
-            //Get window surface
-            screenSurface = SDL_GetWindowSurface( window );
-
-            //Fill the surface white
-            SDL_FillRect( screenSurface, NULL, SDL_MapRGB( screenSurface->format, 0xFF, 0xFF, 0xFF ) );
-
+            //Apply image
+            SDL_BlitSurface( img, NULL, screen, NULL );
             //Update the surface
             SDL_UpdateWindowSurface( window );
-
             //Wait two seconds
-            SDL_Delay( 2000 );
+            SDL_Delay( 10000 );
         }
     }
-    //Destroy window
-    SDL_DestroyWindow( window );
-
-    //Quit SDL subsystems
-    SDL_Quit();
-
+    //Free resources and close SDL
+    _close_win(&window, &img);
     return 0;
 }
