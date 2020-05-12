@@ -6,14 +6,21 @@
 /**
  *
  */
-void _close_win(SDL_Window **window, SDL_Surface **img)
+void close_win(SDL_world_t **window)
 {
-    //Deallocate surface
-    SDL_FreeSurface( *img );
-    *img = NULL;
+    size_t h;
+    for (h = 0; h < (*window)->py; h++)
+    {
+        free((*window)->map[h]);
+    }
+    free((*window)->map);
+    (*window)->map = NULL;
+    //Destroy render
+    SDL_DestroyRenderer((*window)->render);
+    (*window)->render = NULL;
     //Destroy window
-    SDL_DestroyWindow( *window );
-    *window = NULL;
+    SDL_DestroyWindow((*window)->window);
+    (*window)->window = NULL;
     //Quit SDL subsystems
     SDL_Quit();
 }

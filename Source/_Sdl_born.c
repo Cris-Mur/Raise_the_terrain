@@ -11,42 +11,64 @@
  * @S_surface: input addres screen
  * Return: Always (1) if success (-1) if failed
  */
-int _Sdl_born(const int S_w, const int S_h, SDL_Window **window, SDL_Surface **S_surface)
+int _Sdl_born(SDL_world_t **window)
 {
-    SDL_Window *win;
-    SDL_Surface *terrain;
+	SDL_world_t *tmp = NULL;
 
-    //Initialize SDL
-    if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
-    {
-        //write in a terminal Error message
-        printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError() );
-        return (-1);
-    }
+	if (!window)
+		return (-1);
 
-    //Create window
-    win = SDL_CreateWindow( "Raise the terrain", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, S_w, S_h, SDL_WINDOW_SHOWN );
-    if( win == NULL )
-    {
-        printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );
-        //Quit SDL subsystems
-        SDL_Quit();
-        return (-1);
-    }
-    *window = win;
-
-    //Get window surface
-    terrain = SDL_GetWindowSurface(win);
-    if (terrain == NULL)
-    {
-        printf("Sourface could not be charged!! SDL_Error: %s\n", SDL_GetError());
-        //Destroy window
-        SDL_DestroyWindow( *window );
-        //Quit SDL subsystems
-        SDL_Quit();
-        return (-1);
-    }
-    *S_surface = terrain;
-
-    return (1);
+	tmp = malloc(sizeof(SDL_world_t));
+	if (!tmp)
+		return (-1);
+	//Initialize SDL
+	if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
+	{
+		//write in a terminal Error message
+		printf( "SDL could not initialize! SDL_Error: %s\n",
+			SDL_GetError() );
+		return (-1);
+	}
+	tmp->window = NULL;
+	//Create window
+	tmp->window = SDL_CreateWindow( "Raise the terrain",
+					SDL_WINDOWPOS_UNDEFINED,
+					SDL_WINDOWPOS_UNDEFINED,
+					_SCREEN_WIDTH,
+					_SCREEN_HEIGHT,
+					SDL_WINDOW_SHOWN);
+	if(tmp->window == NULL)
+	{
+		printf( "Window could not be created! SDL_Error: %s\n",
+			SDL_GetError() );
+		//FREE structure
+		free(tmp);
+		//Quit SDL subsystems
+		SDL_Quit();
+		return (-1);
+	}
+	tmp->render = NULL;
+	//Get window surface
+	tmp->render = SDL_CreateRenderer(tmp->window, -1,
+					 SDL_RENDERER_ACCELERATED |
+					 SDL_RENDERER_PRESENTVSYNC);
+	if (tmp->render == NULL)
+	{
+		printf("Render could not be created!! SDL_Error: %s\n",
+		       SDL_GetError());
+		//Destroy window
+		SDL_DestroyWindow(tmp->window);
+		//FREE structure
+		free(tmp);
+		//Quit SDL subsystems
+		SDL_Quit();
+		return (-1);
+	}
+	tmp->path = NULL;
+	tmp->map = NULL;
+	tmp->px = 0;
+	tmp->py = 0;
+	//assing tmp to main struct
+	*window = tmp;
+	return (1);
 }

@@ -1,44 +1,65 @@
 #include "../Headers/basic_libs.h"
-
+/**
+ * main - program that draw a grid using isometric projection
+ * @argc: ARGument Counter
+ * @argv: ARGument Vector
+ * Return: Always 0 (success)
+ */
 int main(int argc, char **argv) {
+	//The Window structure
+	SDL_world_t *win;
+	//Main loop flag
+	int quit = 0;
+	//Event handler
+	SDL_Event e;
 
-    //Screen dimension constants
-    const int SCREEN_WIDTH = 640;
-    const int SCREEN_HEIGHT = 480;
-    //The window we'll be rendering to
-    SDL_Window *window = NULL;
-    //The surface contained by the window
-    SDL_Surface *screen = NULL;
-    //The image that will be load
-    SDL_Surface *img = NULL;
-
-    int t = 0;
-
-    // write test
-    write(STDOUT_FILENO, "Raise the terrain\n", 18);
-    //Start SDL
-    if (!_Sdl_born(SCREEN_WIDTH, SCREEN_HEIGHT, &window, &screen))
+	if (argc < 2 || argc > 2)
     {
-        printf("Failed to initialize!\n");
+	    write(STDERR_FILENO,
+	            "Usage [APP] <depth file (*.map)>\n", 34);
+	    exit (-1);
     }
-    else
-    {
-        //Load image
-        if (!_load_img(&img))
+	// write test
+	write(STDOUT_FILENO, "Raise the terrain\n", 18);
+	//Start SDL
+	if (!_Sdl_born(&win))
+	{
+		printf("Failed to initialize!\n");
+		exit (-1);
+	}
+	else
+	{
+	    win->path = strdup(argv[1]);
+        //initialize marix map values
+        if (init_map(&win))
         {
-            printf("Failed to load image!\n");
+            // cycle of the program
+            while (!quit)
+            {
+                //Set Render Color
+                SDL_SetRenderDrawColor(
+                        win->render, 0, 0, 0, 0);
+                // Render Clear
+                SDL_RenderClear(win->render);
+                //Handle events on queue
+                while (SDL_PollEvent(&e) != 0)
+                {
+                    //User requests quit
+                    if (e.type == SDL_QUIT) {
+                        quit = 1;
+                    }
+                }
+                //Set Render Color
+                SDL_SetRenderDrawColor(
+                        win->render, 255, 0, 255, 255);
+                _draw_map(&win);
+                //Update Render
+                SDL_RenderPresent(win->render);
+            }
         }
-        else
-        {
-            //Apply image
-            SDL_BlitSurface( img, NULL, screen, NULL );
-            //Update the surface
-            SDL_UpdateWindowSurface( window );
-            //Wait two seconds
-            SDL_Delay( 10000 );
-        }
-    }
-    //Free resources and close SDL
-    _close_win(&window, &img);
-    return 0;
+	}
+	//Free resources and close SDL
+	close_win(&win);
+	write(STDOUT_FILENO, "Bye...\n",7);
+	return 0;
 }
