@@ -9,14 +9,16 @@
  */
 int init_map(SDL_world_t **pWorld)
 {
-    FILE *log;
-    size_t lenny, w, h;
-    char *buffersito, *tk;
+    FILE *log = NULL;
+    size_t lenny = 0, w = 0, h = 0;
+    char *buffersito = NULL, *tk = NULL;
+    SDL_world_t *tmp = NULL;
 
-    file_catch((SDL_world_t **) pWorld);
+    tmp = *pWorld;
+    tmp = file_catch(&tmp);
 
-    if ((*pWorld)->path) {
-        log = fopen((*pWorld)->path, "r");
+    if (tmp->path) {
+        log = fopen(tmp->path, "r");
         if (!log) {
             write(STDERR_FILENO,
                   "ERROR can't open file...\n", 25);
@@ -28,17 +30,16 @@ int init_map(SDL_world_t **pWorld)
             tk = strtok(buffersito, " \n");
             for (w = 0; tk; w++)
             {
-                printf("px: %u", (*pWorld)->px);
-                printf("py: %u", (*pWorld)->py);
-                (*pWorld)->map[h][w].x = (_SCREEN_WIDTH / (*pWorld)->px + 8) * (h + 1);
-                (*pWorld)->map[h][w].y = (_SCREEN_HEIGHT / (*pWorld)->py + 8) * (w + 1);
-                (*pWorld)->map[h][w].z = atof(tk);
+                tmp->map[h][w].x = (_SCREEN_WIDTH / (tmp->px + 8)) * (h + 1);
+                tmp->map[h][w].y = (_SCREEN_HEIGHT / (tmp->py + 3)) * (w + 1);
+                tmp->map[h][w].z = atof(tk);
                 tk = strtok(NULL, " \n");
             }
         }
         free(buffersito);
         fclose(log);
     }
+    *pWorld = tmp;
     return (1);
 }
 
@@ -47,57 +48,60 @@ int init_map(SDL_world_t **pWorld)
  * @path - input path of the map file
  * Return: matrix of Z coordinates
  */
-void file_catch(SDL_world_t **pWorld)
+SDL_world_t *file_catch(SDL_world_t **pWorld)
 {
     FILE *log;
     size_t lenny, lennx, tblk = 0;
     char *buffersito, *tk;
+    SDL_world_t *tmp = NULL;
 
-    if ((*pWorld)->path)
+    tmp = *pWorld;
+    if (tmp->path)
     {
-        log = fopen((*pWorld)->path, "r");
+        log = fopen(tmp->path, "r");
         if (!log)
         {
             write(STDERR_FILENO,
                     "ERROR can't open file...\n", 25);
-            return;
+            return (NULL);
         }
         //get size of the matrix
         for (; getline(&buffersito, &lenny, log) != -1;
-        (*pWorld)->py++)
-            if ((*pWorld)->py == 0)
+        tmp->py++)
+            if (tmp->py == 0)
             {
                 tk = strtok(buffersito, " \n");
-                for (; tk; (*pWorld)->px++)
+                for (; tk; tmp->px++)
                     tk = strtok(NULL, " \n");
             }
         //allocated matrix [part_y]
-        (*pWorld)->map = malloc(sizeof(cartesian_t *) * (*pWorld)->py);
-        if (!(*pWorld)->map)
+        tmp->map = malloc(sizeof(cartesian_t *) * tmp->py);
+        if (!tmp->map)
         {
             write(STDERR_FILENO,
                     "Allocate map[y] FAILED...\n", 23);
-            return;
+            return (NULL);
         }
         //allocated matrix [y][part_x]
-        for (lenny = 0; lenny < (*pWorld)->py; lenny++)
+        for (lenny = 0; lenny < tmp->py; lenny++)
         {
-            (*pWorld)->map[lenny] = malloc(sizeof(cartesian_t) * (*pWorld)->px);
-            if (!(*pWorld)->map[lenny])
+            tmp->map[lenny] = malloc(sizeof(cartesian_t) * tmp->px);
+            if (!tmp->map[lenny])
             {
                 write(STDERR_FILENO,
                       "Allocate map[y][x] FAILED...\n", 23);
-                return;
+                return (NULL);
             }
-            for (lennx = 0; lennx < (*pWorld)->px; lennx++)
+            for (lennx = 0; lennx < tmp->px; lennx++)
             {
-                (*pWorld)->map[lenny][lennx].x = 0;
-                (*pWorld)->map[lenny][lennx].y = 0;
-                (*pWorld)->map[lenny][lennx].z = 0;
+                tmp->map[lenny][lennx].x = 0;
+                tmp->map[lenny][lennx].y = 0;
+                tmp->map[lenny][lennx].z = 0;
                 tblk++;
             }
         }
         free(buffersito);
         fclose(log);
     }
+    return (tmp);
 }

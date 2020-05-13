@@ -30,7 +30,7 @@ typedef struct cartesian
     float z;
 } cartesian_t;
 /**
- * struct SDL_world - structure that contain SDL win & Surface
+ * struct SDL_world - structure that contain SDL win & Render
  * and system of coordinates
  * @window: address of window instance
  * @Sourface: of the window
@@ -54,7 +54,7 @@ typedef struct SDL_world
 int _Sdl_born(SDL_world_t **window);
 void close_win(SDL_world_t **window);
 int init_map(SDL_world_t **pWorld);
-void file_catch(SDL_world_t **pWorld);
+SDL_world_t *file_catch(SDL_world_t **pWorld);
 void _draw_map(SDL_world_t **window);
 
 #endif //RAISE_THE_TERRAIN_BASIC_LIBS_H

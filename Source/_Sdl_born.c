@@ -47,6 +47,7 @@ int _Sdl_born(SDL_world_t **window)
 		SDL_Quit();
 		return (-1);
 	}
+    SDL_SetWindowResizable(tmp->window, 1);
 	tmp->render = NULL;
 	//Get window surface
 	tmp->render = SDL_CreateRenderer(tmp->window, -1,
