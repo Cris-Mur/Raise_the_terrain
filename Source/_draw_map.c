@@ -12,12 +12,12 @@ void _draw_map(SDL_world_t **pWorld)
     SDL_world_t *tmp = NULL;
     size_t w, h;
     float x, wx, Wx, y, wy, Wy, z;
-    float inx = -1.3, iny = 0.7;
+    float inx = -1.3, iny = 0.6;
     float kx, ky;
 
     tmp = *pWorld;
-    kx = _SCREEN_WIDTH / 1.05;
-    ky = _SCREEN_HEIGHT / 2.1;
+    kx = (_SCREEN_WIDTH + 120) / 1.05;
+    ky = _SCREEN_HEIGHT / 2.9;
     for (h = 0; h < tmp->py; h++)
     {
         for (w = 0; w < tmp->px; w++)

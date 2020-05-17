@@ -16,7 +16,7 @@
 
 //Screen dimension constants
 #define _SCREEN_WIDTH 640
-#define _SCREEN_HEIGHT 480
+#define _SCREEN_HEIGHT 420
 /**
  * struct cartesian - Structure of the cartesian coordinates
  * @x: x value
@@ -51,10 +51,12 @@ typedef struct SDL_world
 } SDL_world_t;
 #endif //RAISE_THE_TERRAIN_GLOBAL_VARIABLES
 
-int _Sdl_born(SDL_world_t **window);
-void close_win(SDL_world_t **window);
+int _Sdl_born(SDL_world_t **pWorld);
+void close_win(SDL_world_t **pWorld);
 int init_map(SDL_world_t **pWorld);
 SDL_world_t *file_catch(SDL_world_t **pWorld);
-void _draw_map(SDL_world_t **window);
+void _draw_map(SDL_world_t **pWorld);
+int horizon(SDL_world_t **pWorld);
+void gyre(SDL_world_t **pWorld, int a);
 
 #endif //RAISE_THE_TERRAIN_BASIC_LIBS_H

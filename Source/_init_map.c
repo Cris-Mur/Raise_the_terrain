@@ -32,7 +32,7 @@ int init_map(SDL_world_t **pWorld)
             {
                 tmp->map[h][w].x = (_SCREEN_WIDTH / (tmp->px + 8)) * (h + 1);
                 tmp->map[h][w].y = (_SCREEN_HEIGHT / (tmp->py + 3)) * (w + 1);
-                tmp->map[h][w].z = atof(tk);
+                tmp->map[h][w].z = (atof(tk)) * 2;
                 tk = strtok(NULL, " \n");
             }
         }
