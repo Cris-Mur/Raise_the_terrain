@@ -37,4 +37,5 @@ int horizon(SDL_world_t **pWorld)
             }
         }
     }
+    return (0);
 }
